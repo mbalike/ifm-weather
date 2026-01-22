@@ -1,0 +1,28 @@
+name: Ingest forecasts hourly
+
+on:
+  schedule:
+    - cron: '0 * * * *' # hourly
+  workflow_dispatch: {}
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Supabase ingest endpoint
+        env:
+          SUPABASE_FUNCTIONS_API_BASE: ${{ secrets.SUPABASE_FUNCTIONS_API_BASE }}
+          INGEST_SECRET: ${{ secrets.INGEST_SECRET }}
+        run: |
+          if [ -z "$SUPABASE_FUNCTIONS_API_BASE" ]; then
+            echo "Missing secret SUPABASE_FUNCTIONS_API_BASE"; exit 1;
+          fi
+          if [ -z "$INGEST_SECRET" ]; then
+            echo "Missing secret INGEST_SECRET"; exit 1;
+          fi
+
+          curl -sS -X POST "$SUPABASE_FUNCTIONS_API_BASE/api/ingest" \
+            -H "content-type: application/json" \
+            -H "x-ingest-secret: $INGEST_SECRET" \
+            -d '{}' \
+            --fail
