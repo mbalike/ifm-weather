@@ -8,7 +8,7 @@ import { WeatherProvider } from './src/state/WeatherContext';
 import { LandingScreen } from './src/screens/LandingScreen';
 import { InsightsScreen } from './src/screens/InsightsScreen';
 import { LocationsScreen } from './src/screens/LocationsScreen';
-import { ReportScreen } from './src/screens/ReportScreen';
+import { AlertsScreen } from './src/screens/AlertsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,7 +35,7 @@ export default function App() {
           <Stack.Screen name="Landing" component={LandingScreen} />
           <Stack.Screen name="Insights" component={InsightsScreen} />
           <Stack.Screen name="Locations" component={LocationsScreen} />
-          <Stack.Screen name="Report" component={ReportScreen} />
+          <Stack.Screen name="Alerts" component={AlertsScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </WeatherProvider>

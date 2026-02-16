@@ -13,7 +13,7 @@ function mulberry32(seed) {
   };
 }
 
-export function StarryBackground({ children }) {
+export function StarryBackground({ children, colors, locations }) {
   const stars = useMemo(() => {
     const { width, height } = Dimensions.get('window');
     const rand = mulberry32(1337);
@@ -34,8 +34,8 @@ export function StarryBackground({ children }) {
   return (
     <View style={styles.root}>
       <LinearGradient
-        colors={[theme.colors.bgTop, theme.colors.bgMid, theme.colors.bgBottom]}
-        locations={[0, 0.55, 1]}
+        colors={Array.isArray(colors) && colors.length >= 2 ? colors : [theme.colors.bgTop, theme.colors.bgMid, theme.colors.bgBottom]}
+        locations={Array.isArray(locations) && locations.length ? locations : [0, 0.55, 1]}
         style={StyleSheet.absoluteFill}
       />
 

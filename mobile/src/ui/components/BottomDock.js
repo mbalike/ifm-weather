@@ -18,7 +18,7 @@ export function BottomDock({ onLeft, onCenter, onRight }) {
         <View style={styles.centerSlot}>
           <Pressable style={styles.centerButton} onPress={onCenter}>
             <View style={styles.centerButtonGlow} />
-            <Ionicons name="add" size={26} color={theme.colors.bgTop} />
+            <Ionicons name="notifications" size={24} color={theme.colors.bgTop} />
           </Pressable>
         </View>
 

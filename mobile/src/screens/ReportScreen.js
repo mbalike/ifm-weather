@@ -121,7 +121,7 @@ export function ReportScreen({ navigation }) {
 
       <BottomDock
         onLeft={() => navigation.navigate('Locations')}
-        onCenter={() => navigation.navigate('Report')}
+        onCenter={() => navigation.navigate('Alerts')}
         onRight={() => navigation.navigate('Insights')}
       />
     </StarryBackground>

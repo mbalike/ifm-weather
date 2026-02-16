@@ -1,0 +1,9 @@
+{
+  "locations": [
+    { "name": "Zanzibar", "region": "TZ", "latitude": -6.1659, "longitude": 39.2026, "timezone": "Africa/Dar_es_Salaam" },
+    { "name": "Tanga", "region": "TZ", "latitude": -5.0692, "longitude": 39.0988, "timezone": "Africa/Dar_es_Salaam" },
+    { "name": "Mwanza", "region": "TZ", "latitude": -2.5164, "longitude": 32.9175, "timezone": "Africa/Dar_es_Salaam" },
+    { "name": "Arusha", "region": "TZ", "latitude": -3.3869, "longitude": 36.6830, "timezone": "Africa/Dar_es_Salaam" },
+    { "name": "Moshi", "region": "TZ", "latitude": -3.3349, "longitude": 37.3404, "timezone": "Africa/Dar_es_Salaam" }
+  ]
+}

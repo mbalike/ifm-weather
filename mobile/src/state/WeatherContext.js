@@ -12,6 +12,7 @@ function pickNumber(...vals) {
 
 function normalizeForecast(raw) {
   const currentTemp = pickNumber(raw?.temp_c, raw?.temp, raw?.current?.temp_c, raw?.current?.temp);
+  const feelsLikeC = pickNumber(raw?.feels_like_c, raw?.feelslike_c, raw?.current?.feels_like_c, raw?.current?.feelslike_c, raw?.current?.feels_like);
   const humidity = pickNumber(raw?.humidity, raw?.current?.humidity);
   const windMs = pickNumber(raw?.wind_ms, raw?.current?.wind_ms, raw?.wind_kph ? raw.wind_kph / 3.6 : null);
   const rainMm = pickNumber(raw?.rain_mm, raw?.current?.rain_mm, raw?.precip_mm, raw?.current?.precip_mm);
@@ -23,13 +24,21 @@ function normalizeForecast(raw) {
     raw,
     summary: raw?.summary ?? raw?.condition?.text ?? raw?.current?.condition?.text ?? null,
     tempC: currentTemp,
+    feelsLikeC,
     highC: high,
     lowC: low,
     humidity,
     windMs,
     rainMm,
     chanceOfRainPct: pickNumber(raw?.chance_of_rain_pct, raw?.daily_chance_of_rain, raw?.day?.daily_chance_of_rain),
-    uvIndex: pickNumber(raw?.uv, raw?.uv_index, raw?.current?.uv),
+    uvIndex: pickNumber(raw?.uv, raw?.uv_index, raw?.current?.uv, raw?.uvi, raw?.current?.uvi),
+    pressureHpa: pickNumber(raw?.pressure_hpa, raw?.pressure, raw?.current?.pressure),
+    visibilityKm: pickNumber(raw?.visibility_km, raw?.visibility_km),
+    windDeg: pickNumber(raw?.wind_deg, raw?.current?.wind_deg),
+    windDir: raw?.wind_dir ?? null,
+    timeline: raw?.timeline ?? null,
+    localAlerts: Array.isArray(raw?.local_alerts) ? raw.local_alerts : [],
+    serverAlerts: Array.isArray(raw?.alerts) ? raw.alerts : [],
     sunrise: raw?.sunrise ?? raw?.astro?.sunrise ?? null,
     sunset: raw?.sunset ?? raw?.astro?.sunset ?? null,
   };
@@ -56,18 +65,20 @@ export function WeatherProvider({ children }) {
   const loadForLocation = useCallback(async (location) => {
     if (!location?.id) return;
 
-    const [forecastRes, alertsRes] = await Promise.all([
-      fetch(`${API_BASE_URL}/api/locations/${location.id}/forecast`),
-      fetch(`${API_BASE_URL}/api/locations/${location.id}/alerts`).catch(() => null),
-    ]);
-
+    const forecastRes = await fetch(`${API_BASE_URL}/api/locations/${location.id}/forecast`);
     if (!forecastRes.ok) throw new Error('Failed to load forecast');
 
     const forecastData = await forecastRes.json();
-    const alertsData = alertsRes && alertsRes.ok ? await alertsRes.json() : [];
+    const normalized = normalizeForecast(forecastData);
 
-    setForecast(normalizeForecast(forecastData));
-    setAlerts(Array.isArray(alertsData) ? alertsData : []);
+    // Prefer embedded alerts from the forecast response (keeps the app at 1 call per refresh).
+    const mergedAlerts = [
+      ...(Array.isArray(normalized.serverAlerts) ? normalized.serverAlerts : []),
+      ...(Array.isArray(normalized.localAlerts) ? normalized.localAlerts : []),
+    ];
+
+    setForecast(normalized);
+    setAlerts(mergedAlerts);
   }, []);
 
   const refresh = useCallback(async () => {
